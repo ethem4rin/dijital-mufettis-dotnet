@@ -1,0 +1,29 @@
+﻿@model IReadOnlyList<DijitalMufettis.Domain.Models.GunlukKayit>
+@{
+    ViewData["Title"] = "Okunan Kayıtlar";
+}
+
+<h1>Okunan Kayıtlar <span class="text-muted">(@Model.Count satır)</span></h1>
+<a asp-action="Yukle" class="btn btn-secondary mb-3">← Yeni dosya yükle</a>
+
+<table class="table table-striped table-sm">
+    <thead>
+        <tr>
+            <th>Personel</th>
+            <th>Tarih</th>
+            <th>Giriş</th>
+            <th>Çıkış</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var kayit in Model)
+        {
+            <tr>
+                <td>@kayit.Personel</td>
+                <td>@kayit.Tarih.ToString("dd.MM.yyyy")</td>
+                <td>@kayit.Giris</td>
+                <td>@kayit.Cikis</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -7,7 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DijitalMufettis.Domain\DijitalMufettis.Domain.csproj" />
+    <PackageReference Include="ClosedXML" Version="0.105.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DijitalMufettis.Application\DijitalMufettis.Application.csproj" />
   </ItemGroup>
 
 </Project>
