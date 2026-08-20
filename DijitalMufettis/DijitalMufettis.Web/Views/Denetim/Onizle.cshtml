@@ -46,6 +46,15 @@
 
     <div class="row g-3">
         <div class="col-md-4">
+            <label class="form-label">Sektör</label>
+            <select name="sektor" class="form-select">
+                @foreach (var s in Enum.GetValues<DijitalMufettis.Domain.Enums.Sektor>())
+                {
+                    <option value="@s">@s</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-4">
             <label class="form-label">Başlık satırı</label>
             <select name="baslikSatiri" class="form-select">
                 @for (int r = 1; r <= satirSayisi; r++)

@@ -5,7 +5,7 @@ namespace DijitalMufettis.Domain.Models;
 /// tespit edilen tek bir yasal ihlali temseil eder değişmez
 /// bir olgufur oluşuturulduktan sonra alanları değiştirilemez
 /// </summary>
-internal record Ihlal
+public record Ihlal
 {
     /// <summary>İhlalin ait olduğu personelin ad-soyadı.</summary>
     public required string Personel { get; init; }

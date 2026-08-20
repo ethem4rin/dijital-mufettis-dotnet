@@ -1,22 +1,44 @@
-﻿@model IReadOnlyList<DijitalMufettis.Domain.Models.GunlukKayit>
+﻿@model DijitalMufettis.Web.Models.SonucViewModel
 @{
-    ViewData["Title"] = "Okunan Kayıtlar";
+    ViewData["Title"] = "Denetim Sonucu";
 }
 
-<h1>Okunan Kayıtlar <span class="text-muted">(@Model.Count satır)</span></h1>
-<a asp-action="Yukle" class="btn btn-secondary mb-3">← Yeni dosya yükle</a>
+<h1>Denetim Sonucu</h1>
+<a asp-action="Yukle" class="btn btn-secondary mb-3">← Yeni dosya</a>
 
-<table class="table table-striped table-sm">
+<h3>Tespit Edilen İhlaller <span class="badge bg-danger">@Model.Ihlaller.Count</span></h3>
+
+@if (Model.Ihlaller.Count == 0)
+{
+    <div class="alert alert-success">Bu kuralda ihlal bulunamadı. 🎉</div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr><th>Personel</th><th>Tarih</th><th>İhlal</th><th>Detay</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var ihlal in Model.Ihlaller)
+            {
+                <tr>
+                    <td>@ihlal.Personel</td>
+                    <td>@ihlal.Tarih.ToString("dd.MM.yyyy")</td>
+                    <td><span class="badge bg-warning text-dark">@ihlal.Tip</span></td>
+                    <td>@ihlal.Detay</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<h3 class="mt-4">Okunan Kayıtlar <span class="text-muted">(@Model.Kayitlar.Count)</span></h3>
+<table class="table table-sm table-bordered">
     <thead>
-        <tr>
-            <th>Personel</th>
-            <th>Tarih</th>
-            <th>Giriş</th>
-            <th>Çıkış</th>
-        </tr>
+        <tr><th>Personel</th><th>Tarih</th><th>Giriş</th><th>Çıkış</th></tr>
     </thead>
     <tbody>
-        @foreach (var kayit in Model)
+        @foreach (var kayit in Model.Kayitlar)
         {
             <tr>
                 <td>@kayit.Personel</td>

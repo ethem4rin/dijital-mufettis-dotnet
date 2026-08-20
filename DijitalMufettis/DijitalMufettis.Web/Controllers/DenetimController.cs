@@ -1,4 +1,6 @@
 ﻿using DijitalMufettis.Application.Interfaces;
+using DijitalMufettis.Application.Kurallar;
+using DijitalMufettis.Domain.Enums;
 using DijitalMufettis.Domain.Models;
 using DijitalMufettis.Web.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -8,13 +10,14 @@ namespace DijitalMufettis.Web.Controllers;
 public class DenetimController : Controller
 {
     private readonly IPdksOkuyucu _okuyucu;
+    private readonly GunlukSinirKurali _gunlukSinirKurali;
 
-    public DenetimController(IPdksOkuyucu okuyucu)
+    public DenetimController(IPdksOkuyucu okuyucu, GunlukSinirKurali gunlukSinirKurali)
     {
         _okuyucu = okuyucu;
+        _gunlukSinirKurali = gunlukSinirKurali;
     }
 
-    // Yüklenen dosyaların geçici saklandığı klasör (yoksa oluşturur)
     private static string GeciciKlasor()
     {
         var klasor = Path.Combine(Path.GetTempPath(), "DijitalMufettis");
@@ -22,18 +25,15 @@ public class DenetimController : Controller
         return klasor;
     }
 
-    // ADIM 1 — GET /Denetim/Yukle : yükleme formu
     [HttpGet]
     public IActionResult Yukle() => View();
 
-    // ADIM 2 — POST /Denetim/Onizle : dosyayı kaydet, önizleme + öneri göster
     [HttpPost]
     public IActionResult Onizle(IFormFile dosya)
     {
         if (dosya is null || dosya.Length == 0)
             return RedirectToAction(nameof(Yukle));
 
-        // Dosyayı GUID adıyla geçici klasöre kaydet
         var kimlik = Guid.NewGuid().ToString();
         var yol = Path.Combine(GeciciKlasor(), kimlik + ".xlsx");
         using (var akis = System.IO.File.Create(yol))
@@ -51,14 +51,13 @@ public class DenetimController : Controller
         return View(vm);
     }
 
-    // ADIM 3 — POST /Denetim/Kayitlar : kullanıcının seçtiği haritayla oku
     [HttpPost]
     public IActionResult Kayitlar(
         string dosyaKimligi,
+        Sektor sektor,
         int baslikSatiri, int adSutun, int? soyadSutun,
         int tarihSutun, int? girisSutun, int? cikisSutun)
     {
-        // Güvenlik: kimlik gerçek bir GUID mi? (kötü niyetli yol girişini engeller)
         if (!Guid.TryParse(dosyaKimligi, out _))
             return RedirectToAction(nameof(Yukle));
 
@@ -77,9 +76,17 @@ public class DenetimController : Controller
         };
 
         var kayitlar = _okuyucu.Oku(yol, harita);
+        System.IO.File.Delete(yol);
 
-        System.IO.File.Delete(yol);   // iş bitti, geçici dosyayı temizle
+        // Kuralı çalıştır → ihlalleri bul
+        var ayarlar = new DenetimAyarlari { Sektor = sektor };
+        var ihlaller = _gunlukSinirKurali.Uygula(kayitlar, ayarlar).ToList();
 
-        return View(kayitlar);
+        var vm = new SonucViewModel
+        {
+            Kayitlar = kayitlar,
+            Ihlaller = ihlaller
+        };
+        return View(vm);
     }
 }

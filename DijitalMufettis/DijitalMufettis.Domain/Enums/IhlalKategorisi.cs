@@ -8,7 +8,7 @@
 
 public enum IhlalKategorisi
 {
-    GunlukSınır,
+    GunlukSinir,
     Gece,
     GeceOnay,
     Dinlenme11,

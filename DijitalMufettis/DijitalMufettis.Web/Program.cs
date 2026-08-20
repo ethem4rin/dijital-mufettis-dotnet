@@ -1,11 +1,15 @@
 using DijitalMufettis.Application.Interfaces;
 using DijitalMufettis.Infrastructure.Excel;
+using DijitalMufettis.Application.Hesaplama;
+using DijitalMufettis.Application.Kurallar;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IPdksOkuyucu, PdksOkuyucu>();
+builder.Services.AddScoped<MesaiHesaplayici>();
+builder.Services.AddScoped<GunlukSinirKurali>();
 
 var app = builder.Build();
 
