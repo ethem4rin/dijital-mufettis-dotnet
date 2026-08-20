@@ -1,4 +1,4 @@
-using DijitalMufettis.Application.Interface;
+using DijitalMufettis.Application.Interfaces;
 using DijitalMufettis.Infrastructure.Excel;
 
 var builder = WebApplication.CreateBuilder(args);

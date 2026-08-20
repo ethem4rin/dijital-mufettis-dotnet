@@ -1,0 +1,114 @@
+﻿@model DijitalMufettis.Web.Models.OnizlemeViewModel
+@{
+    ViewData["Title"] = "Sütun Eşleştirme";
+    var oneri = Model.Onizleme.OnerilenHarita;      // null olabilir
+    var sutunSayisi = Model.Onizleme.SutunSayisi;
+    var satirSayisi = Model.Onizleme.Satirlar.Count;
+}
+
+<h1>Sütun Eşleştirme</h1>
+<p class="text-muted">
+    Aşağıda dosyanın ilk satırları var. Her alanın hangi sütuna denk geldiğini seç.
+    Program bir tahmin yaptı; yanlışsa düzelt.
+</p>
+
+<h4>Önizleme</h4>
+<div class="table-responsive">
+    <table class="table table-bordered table-sm">
+        <thead>
+            <tr>
+                <th>#</th>
+                @for (int k = 1; k <= sutunSayisi; k++)
+                {
+                    <th>Sütun @k</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @for (int r = 0; r < satirSayisi; r++)
+            {
+                var satir = Model.Onizleme.Satirlar[r];
+                <tr>
+                    <td class="fw-bold">@(r + 1)</td>
+                    @for (int k = 0; k < sutunSayisi; k++)
+                    {
+                        <td>@(k<satir.Count? satir[k] : "")</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<h4 class="mt-4">Eşleştirme</h4>
+<form asp-controller="Denetim" asp-action="Kayitlar" method="post">
+    <input type="hidden" name="dosyaKimligi" value="@Model.DosyaKimligi" />
+
+    <div class="row g-3">
+        <div class="col-md-4">
+            <label class="form-label">Başlık satırı</label>
+            <select name="baslikSatiri" class="form-select">
+                @for (int r = 1; r <= satirSayisi; r++)
+                {
+                    <option value="@r" selected="@(oneri != null && oneri.BaslikSatiri == r)">Satır @r</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">Ad (veya Ad-Soyad) sütunu</label>
+            <select name="adSutun" class="form-select">
+                @for (int k = 1; k <= sutunSayisi; k++)
+                {
+                    <option value="@k" selected="@(oneri != null && oneri.AdSutun == k)">Sütun @k</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">Soyad sütunu (opsiyonel)</label>
+            <select name="soyadSutun" class="form-select">
+                <option value="">— Yok (ad-soyad birleşik) —</option>
+                @for (int k = 1; k <= sutunSayisi; k++)
+                {
+                    <option value="@k" selected="@(oneri != null && oneri.SoyadSutun == k)">Sütun @k</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">Tarih sütunu</label>
+            <select name="tarihSutun" class="form-select">
+                @for (int k = 1; k <= sutunSayisi; k++)
+                {
+                    <option value="@k" selected="@(oneri != null && oneri.TarihSutun == k)">Sütun @k</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">Giriş sütunu (opsiyonel)</label>
+            <select name="girisSutun" class="form-select">
+                <option value="">— Yok —</option>
+                @for (int k = 1; k <= sutunSayisi; k++)
+                {
+                    <option value="@k" selected="@(oneri != null && oneri.GirisSutun == k)">Sütun @k</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">Çıkış sütunu (opsiyonel)</label>
+            <select name="cikisSutun" class="form-select">
+                <option value="">— Yok —</option>
+                @for (int k = 1; k <= sutunSayisi; k++)
+                {
+                    <option value="@k" selected="@(oneri != null && oneri.CikisSutun == k)">Sütun @k</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Oku ve Listele</button>
+    <a asp-action="Yukle" class="btn btn-secondary mt-3">← Vazgeç</a>
+</form>
